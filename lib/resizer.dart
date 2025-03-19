@@ -108,7 +108,7 @@ class _ResizePanelState extends State<ResizePanel> {
                         //    print(stateProvider.img.resizedImg);
                          Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SizeSelector(imagge: image,)),
+          MaterialPageRoute(builder: (context) => SizeSelector(imagge: stateProvider.img.resizedImg,)),
         );
                           }
                        // }
