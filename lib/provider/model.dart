@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class StateProvider with ChangeNotifier{
-  
+  var conversionState = false;
   late Photo img;
   String uiState = "HW";
  // String resizeState = "getInput"; //getInput,resizing,resized

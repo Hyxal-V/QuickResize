@@ -70,7 +70,7 @@ void dispose() {
     stateProvider.img.targetHeight = int.parse(value);
     print("Input Value: $value"); 
       }else{
-    stateProvider.img.targetHeight = stateProvider.img.originalHeight;
+    stateProvider.img.targetHeight = 0;
 
       }
 
@@ -96,7 +96,7 @@ void dispose() {
     stateProvider.img.targetWidth = int.parse(value);
 
       }  else{
-    stateProvider.img.targetWidth = stateProvider.img.originalWidth;
+    stateProvider.img.targetWidth = 0;
 
       }          
               

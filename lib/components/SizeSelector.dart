@@ -176,7 +176,6 @@ class _SizeSelectorState extends State<SizeSelector> {
   Widget build(BuildContext context) {
     TextEditingController sizeController = TextEditingController();
     final stateProvider = Provider.of<StateProvider>(context);
-
     return Scaffold(
       floatingActionButton: Padding(
                 padding: EdgeInsets.only(
@@ -186,42 +185,57 @@ class _SizeSelectorState extends State<SizeSelector> {
                 child: Stack(
                   children: [
                     FloatingActionButton(
-                      onPressed: ()async {
-           
-                      if(sizeController.text!=""){
-                              final status = await _requestStoragePermission(context);
-                        print("$status");
-                        if(status==true){
-                 var imgggg = await (  findOptimalQualityAndSave(widget.imagge,int.parse(sizeController.text) ));
-                 showDialog(context: context, builder: (_)=>AlertDialog(
-        backgroundColor: Colors.black,
-        title: Text('Resize Complete',
-            style: TextStyle(color: Colors.white)),
-        content: Text(
-            'Image resized and saved to your photos app',
-            style: TextStyle(color: Colors.white)),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Ok', style: TextStyle(color: Colors.grey)),
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
+                      
+  onPressed: () async {
+    if (!stateProvider.conversionState) {
+      if (sizeController.text.isNotEmpty&&int.parse(sizeController.text)!=0) {
+        stateProvider.conversionState = true;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: AppColors.buttonBackground,
+            content: Row(
+              children: [
+                CircularProgressIndicator(color: AppColors.defaultText), 
+                Text("Resizing image..."),
+              ],
+            ),
+            duration: Duration(days: 1),
           ),
-          
-        ],
-      )  );
-                   
-                 }
-                      }
-                  
-  
-                      },
-                      child: Icon(
-                        Icons.send,
-                        color: AppColors.buttonBackground,
-                      ),
-                      backgroundColor: AppColors.resizeButton,
-                    ),
+        );
+
+        await Future.delayed(Duration(milliseconds: 100));
+
+        final status = await _requestStoragePermission(context);
+        print("$status");
+
+        if (status == true) {
+          await findOptimalQualityAndSave(widget.imagge, int.parse(sizeController.text));
+
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: AppColors.buttonBackground,
+              content: Text(style: TextStyle(color: AppColors.defaultText),"Image resized and saved to your photos app"),
+              duration: Duration(seconds: 6),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        }
+
+        stateProvider.conversionState = false;
+      }
+    }
+  },
+  child: Icon(
+    Icons.send,
+    color: AppColors.buttonBackground,
+  ),
+  backgroundColor: AppColors.resizeButton,
+),
+
                   ],
                 ),
               ),
@@ -235,6 +249,7 @@ class _SizeSelectorState extends State<SizeSelector> {
             print('KB - ${snapshot.data}');
             return Column(
               children: [
+                
                     Expanded(
                       flex: 1,
                       child: Image.file(

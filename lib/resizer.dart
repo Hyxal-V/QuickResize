@@ -44,7 +44,7 @@ class _ResizePanelState extends State<ResizePanel> {
               originalHeight: decodedImage.height,
               originalWidth: decodedImage.width,
               targetHeight: 0,
-              targetWidth: 0
+              targetWidth: 0,
             );
             //stateProvider.img.outputInfo();
 

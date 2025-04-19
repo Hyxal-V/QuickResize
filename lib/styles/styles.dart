@@ -6,6 +6,7 @@ class textDesigns{
   static const TextStyle  valueText = TextStyle(color:AppColors.defaultText,fontSize: 20,fontWeight: FontWeight.w800 );
   static const TextStyle  aspectText = TextStyle(color:AppColors.defaultText,fontSize: 24,fontWeight: FontWeight.w800 );
   static const TextStyle  headText= TextStyle(color:AppColors.defaultText,fontSize: 30,fontWeight: FontWeight.w800 );
+  static const TextStyle  sendBtnText = TextStyle(color:AppColors.backgroud,fontSize: 24,fontWeight: FontWeight.w500 );
 
 
 }

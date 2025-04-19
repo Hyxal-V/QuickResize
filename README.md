@@ -6,6 +6,7 @@
 
 "**Meet QuickResize**—a privacy-first, open-source tool built to streamline image uploads for forms. Resize images to the exact resolution (e.g., 800x600) and compress them to meet strict file size limits (e.g., 200KB) required by online forms, applications, or document submissions. Perfect for job portals, government forms, or school applications, QuickResize ensures your images comply effortlessly without sacrificing quality. Everything happens offline—your data never leaves your device."
 
+![QuicResize](Cover.png)
 
 ---
 
