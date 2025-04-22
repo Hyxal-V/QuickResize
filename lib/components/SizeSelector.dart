@@ -68,12 +68,13 @@ Future<int> reduceImageQualityTo10AndGetSizeKB(img.Image imgs) async {
   return sizeInKB;
 }
 
-
 Future<bool> _requestStoragePermission(BuildContext context) async {
   if (await Permission.manageExternalStorage.status.isGranted) {
     return true;
   }
-  if (await Permission.photos.status.isGranted && await Permission.videos.status.isGranted && await Permission.audio.status.isGranted) {
+  if (await Permission.photos.status.isGranted &&
+      await Permission.videos.status.isGranted &&
+      await Permission.audio.status.isGranted) {
     return true;
   }
 
@@ -81,7 +82,9 @@ Future<bool> _requestStoragePermission(BuildContext context) async {
     return true;
   }
 
-  if (await Permission.photos.request().isGranted && await Permission.videos.request().isGranted && await Permission.audio.request().isGranted) {
+  if (await Permission.photos.request().isGranted &&
+      await Permission.videos.request().isGranted &&
+      await Permission.audio.request().isGranted) {
     return true;
   }
 
@@ -92,9 +95,13 @@ Future<bool> _requestStoragePermission(BuildContext context) async {
     final videosStatus = await Permission.videos.request();
     final audioStatus = await Permission.audio.request();
 
-    if (photosStatus.isGranted && videosStatus.isGranted && audioStatus.isGranted) {
+    if (photosStatus.isGranted &&
+        videosStatus.isGranted &&
+        audioStatus.isGranted) {
       return true;
-    } else if (photosStatus.isDenied || videosStatus.isDenied || audioStatus.isDenied) {
+    } else if (photosStatus.isDenied ||
+        videosStatus.isDenied ||
+        audioStatus.isDenied) {
       return await _showPermissionDialog(context);
     } else if (photosStatus.isPermanentlyDenied ||
         videosStatus.isPermanentlyDenied ||
@@ -138,7 +145,8 @@ Future<bool> _showPermissionDialog(BuildContext context) async {
             },
           ),
           TextButton(
-            child: Text('Open Settings', style: TextStyle(color: Colors.lightBlue)),
+            child: Text('Open Settings',
+                style: TextStyle(color: Colors.lightBlue)),
             onPressed: () async {
               await openAppSettings();
               Navigator.of(context).pop(false);
@@ -163,8 +171,8 @@ Future<int> getAndroidSDKVersion() async {
 }
 
 class SizeSelector extends StatefulWidget {
-  final  imagge;
-  const SizeSelector({super.key,required this.imagge});
+  final imagge;
+  const SizeSelector({super.key, required this.imagge});
 
   @override
   State<SizeSelector> createState() => _SizeSelectorState();
@@ -172,84 +180,21 @@ class SizeSelector extends StatefulWidget {
 
 class _SizeSelectorState extends State<SizeSelector> {
   @override
-
   Widget build(BuildContext context) {
     TextEditingController sizeController = TextEditingController();
     final stateProvider = Provider.of<StateProvider>(context);
     return Scaffold(
-      floatingActionButton: Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.sizeOf(context).height * 0.17,
-                  right: MediaQuery.sizeOf(context).width * 0.04,
-                ),
-                child: Stack(
-                  children: [
-                    FloatingActionButton(
-                      
-  onPressed: () async {
-    if (!stateProvider.conversionState) {
-      if (sizeController.text.isNotEmpty&&int.parse(sizeController.text)!=0) {
-        stateProvider.conversionState = true;
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: AppColors.buttonBackground,
-            content: Row(
-              children: [
-                CircularProgressIndicator(color: AppColors.defaultText), 
-                Text("Resizing image..."),
-              ],
-            ),
-            duration: Duration(days: 1),
-          ),
-        );
-
-        await Future.delayed(Duration(milliseconds: 100));
-
-        final status = await _requestStoragePermission(context);
-        print("$status");
-
-        if (status == true) {
-          await findOptimalQualityAndSave(widget.imagge, int.parse(sizeController.text));
-
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: AppColors.buttonBackground,
-              content: Text(style: TextStyle(color: AppColors.defaultText),"Image resized and saved to your photos app"),
-              duration: Duration(seconds: 6),
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        }
-
-        stateProvider.conversionState = false;
-      }
-    }
-  },
-  child: Icon(
-    Icons.send,
-    color: AppColors.buttonBackground,
-  ),
-  backgroundColor: AppColors.resizeButton,
-),
-
-                  ],
-                ),
-              ),
-              backgroundColor: AppColors.backgroud,
-
+    
+      backgroundColor: AppColors.backgroud,
       body: SafeArea(
         child: FutureBuilder(
-          future: reduceImageQualityTo10AndGetSizeKB(stateProvider.img.resizedImg),
-          builder:(context, snapshot){ 
-            if(snapshot.connectionState == ConnectionState.done){
-            print('KB - ${snapshot.data}');
-            return Column(
-              children: [
-                
+            future: reduceImageQualityTo10AndGetSizeKB(
+                stateProvider.img.resizedImg),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                print('KB - ${snapshot.data}');
+                return Column(
+                  children: [
                     Expanded(
                       flex: 1,
                       child: Image.file(
@@ -259,40 +204,135 @@ class _SizeSelectorState extends State<SizeSelector> {
                       ),
                     ),
                     HWTopView(),
-          
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * 0.03,
-               
                     ),
-   
-               
-                                                   Container(
-                                                    margin: EdgeInsets.symmetric(horizontal: MediaQuery.sizeOf(context).height * 0.03,),
-                                                    padding: EdgeInsets.only(bottom: MediaQuery.sizeOf(context).height * 0.07,),
-                                                     child: TextField(
-                                                       decoration: textfieldStyle(hintText: "Size no less than ${snapshot.data} KB"),
-                                                       style: TextStyle(color: AppColors.defaultText),
-                                                       keyboardType: TextInputType.number,
-                                                       controller:sizeController ,
-                                                       onChanged: (value) {
-                                                  
-                                                      
-                                                       },
-                                                       inputFormatters: <TextInputFormatter>[
-                                                         FilteringTextInputFormatter.digitsOnly
-                                                       ], 
-                                                     ),
-                                                   ),
+                    Container(
+                      margin: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.sizeOf(context).height * 0.03,
+                      ),
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.sizeOf(context).height * 0.07,
+                      ),
+                      child: TextField(
+                        decoration: textfieldStyle(
+                            hintText:
+                                "Size cannot be less than ${snapshot.data} KB"),
+                        style: TextStyle(color: AppColors.defaultText),
+                        keyboardType: TextInputType.number,
+                        controller: sizeController,
+                        onChanged: (value) {},
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                      ),
+                    ),
+                    Container(
+                      height: MediaQuery.sizeOf(context).height * 0.08,
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if(sizeController.text!=""){
+                          if(int.parse(sizeController.text)>=snapshot.data!){
+    if (!stateProvider.conversionState) {
+                            if (sizeController.text.isNotEmpty &&
+                                int.parse(sizeController.text) != 0) {
+                              stateProvider.conversionState = true;
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: AppColors.buttonBackground,
+                                  content: Row(
+                                    children: [
+                                      CircularProgressIndicator(
+                                          color: AppColors.primaryColor),
+                                      Text("Resizing image..."),
+                                    ],
+                                  ),
+                                  duration: Duration(days: 1),
+                                ),
+                              );
+
+                              await Future.delayed(Duration(milliseconds: 100));
+
+                              final status =
+                                  await _requestStoragePermission(context);
+                              print("$status");
+
+                              if (status == true) {
+                                await findOptimalQualityAndSave(widget.imagge,
+                                    int.parse(sizeController.text));
+
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: AppColors.buttonBackground,
+                                    content: Text(
+                                        style: TextStyle(
+                                            color: AppColors.defaultText),
+                                        "Image resized and saved to your photos app"),
+                                    duration: Duration(seconds: 6),
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                              }
+
+                              stateProvider.conversionState = false;
+                            }
+    }}else{
+                                    showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                      backgroundColor: AppColors.backgroud,
+                                      title: Text('Error',
+                                          style: TextStyle(
+                                              color: AppColors.defaultText)),
+                                      content: Text(
+                                          'Size cannot be less than ${snapshot.data} KB',
+                                          style: TextStyle(
+                                              color: AppColors.defaultText)),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text('Ok',
+                                              style: TextStyle(
+                                                  color:
+                                                      AppColors.defaultText)),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(false);
+                                          },
+                                        ),
+                                      ],
+                                    ));
+                            }
+                          }
+                      
+                        },
+                        child: Text(
+                          "Convert",
+                          style: TextStyle(
+                              color: AppColors.defaultText,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.nextButton,
+                          shape: RoundedRectangleBorder(
+                            // Rounded corners
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
-               
-            
-            );}
-            else{
-              return Text("");
-            }
-            }
-            
-        ),
+                );
+              } else {
+                return Text("");
+              }
+            }),
       ),
     );
   }

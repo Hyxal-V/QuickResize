@@ -3,13 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:quickresize/home.dart';
 import 'package:quickresize/styles/colors.dart';
 
-import 'package:quickresize/provider/model.dart'; 
+import 'package:quickresize/provider/model.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => StateProvider()), 
+        ChangeNotifierProvider(create: (context) => StateProvider()),
       ],
       child: const MyApp(),
     ),
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-debugShowCheckedModeBanner: false ,
+      debugShowCheckedModeBanner: false,
       home: const SafeArea(child: Home()),
     );
   }

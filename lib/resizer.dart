@@ -31,10 +31,11 @@ class _ResizePanelState extends State<ResizePanel> {
   @override
   Widget build(BuildContext context) {
     final stateProvider = Provider.of<StateProvider>(context);
-    
 
-    return FutureBuilder<ui.Image>( // Specify FutureBuilder type
-      future: getWidthHeight(path: widget.image.files.first.path!), // Use non-nullable path
+    return FutureBuilder<ui.Image>(
+      // Specify FutureBuilder type
+      future: getWidthHeight(
+          path: widget.image.files.first.path!), // Use non-nullable path
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {
@@ -49,83 +50,6 @@ class _ResizePanelState extends State<ResizePanel> {
             //stateProvider.img.outputInfo();
 
             return Scaffold(
-              floatingActionButton: Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.sizeOf(context).height * 0.28,
-                  right: MediaQuery.sizeOf(context).width * 0.04,
-                ),
-                child: Stack(
-                  children: [
-                    FloatingActionButton(
-                      onPressed: () {
-                        if(stateProvider.img.targetHeight==0 || stateProvider.img.targetWidth==0){
-                                     showDialog(context: context, builder: (_)=>AlertDialog(
-        backgroundColor: AppColors.backgroud,
-        title: Text('Error',
-            style: TextStyle(color: AppColors.defaultText)),
-        content: Text(
-            'Height and Width cannot be 0',
-            style: TextStyle(color: AppColors.defaultText)),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Ok', style: TextStyle(color: AppColors.defaultText)),
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-          ),
-          
-        ],
-      )  );
-                        }else if(stateProvider.img.targetHeight>=3000||stateProvider.img.targetWidth>=3000){
-                                                              showDialog(context: context, builder: (_)=>AlertDialog(
-        backgroundColor: AppColors.backgroud,
-        title: Text('Error',
-            style: TextStyle(color: AppColors.defaultText)),
-        content: Text(
-            'Height and Width cannot be 3000 or greater',
-            style: TextStyle(color: AppColors.defaultText)),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Ok', style: TextStyle(color: AppColors.defaultText)),
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-          ),
-          
-        ],
-      )  );
-                        }else{
-                           setState(() {
-                       //   if (stateProvider.uiState == "HW") {
-                            var image = img.decodeImage(
-                                File(stateProvider.img.path).readAsBytesSync());
-                            stateProvider.img.resizedImg =  img.copyResize(
-                                image!,
-                                width: stateProvider.img.targetWidth,
-                                height: stateProvider.img.targetHeight);
-                                print('well ${stateProvider.img.resizedImg}');
-                            stateProvider.uiState = "BS";
-                        //    print(stateProvider.img.resizedImg);
-                         Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => SizeSelector(imagge: stateProvider.img.resizedImg,)),
-        );
-                          }
-                       // }
-                        );
-                        }
-                      //  print(stateProvider.img.targetHeight);
-                       
-                      },
-                      child: Icon(
-                        Icons.send,
-                        color: AppColors.buttonBackground,
-                      ),
-                      backgroundColor: AppColors.resizeButton,
-                    ),
-                  ],
-                ),
-              ),
               body: SafeArea(
                 child: Column(
                   children: [
@@ -138,23 +62,122 @@ class _ResizePanelState extends State<ResizePanel> {
                       ),
                     ),
                     HWTopView(),
-                         AspectRatioSelector(),
-                        // SizeSelector(),
+                    AspectRatioSelector(),
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * 0.03,
-                    )
+                    ),
+                    Container(
+                      height: MediaQuery.sizeOf(context).height * 0.06,
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (stateProvider.img.targetHeight == 0 ||
+                              stateProvider.img.targetWidth == 0) {
+                            showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                      backgroundColor: AppColors.backgroud,
+                                      title: Text('Error',
+                                          style: TextStyle(
+                                              color: AppColors.defaultText)),
+                                      content: Text(
+                                          'Height and Width cannot be 0',
+                                          style: TextStyle(
+                                              color: AppColors.defaultText)),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text('Ok',
+                                              style: TextStyle(
+                                                  color:
+                                                      AppColors.defaultText)),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(false);
+                                          },
+                                        ),
+                                      ],
+                                    ));
+                          } else if (stateProvider.img.targetHeight >= 3000 ||
+                              stateProvider.img.targetWidth >= 3000) {
+                            showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                      backgroundColor: AppColors.backgroud,
+                                      title: Text('Error',
+                                          style: TextStyle(
+                                              color: AppColors.defaultText)),
+                                      content: Text(
+                                          'Height and Width cannot be 3000 or greater',
+                                          style: TextStyle(
+                                              color: AppColors.defaultText)),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text('Ok',
+                                              style: TextStyle(
+                                                  color:
+                                                      AppColors.defaultText)),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(false);
+                                          },
+                                        ),
+                                      ],
+                                    ));
+                          } else {
+                            setState(() {
+                              //   if (stateProvider.uiState == "HW") {
+                              var image = img.decodeImage(
+                                  File(stateProvider.img.path)
+                                      .readAsBytesSync());
+                              stateProvider.img.resizedImg = img.copyResize(
+                                  image!,
+                                  width: stateProvider.img.targetWidth,
+                                  height: stateProvider.img.targetHeight);
+                              print('well ${stateProvider.img.resizedImg}');
+                              stateProvider.uiState = "BS";
+                              //    print(stateProvider.img.resizedImg);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SizeSelector(
+                                          imagge: stateProvider.img.resizedImg,
+                                        )),
+                              );
+                            }
+                                // }
+                                );
+                          }
+                          //  print(stateProvider.img.targetHeight);
+                        },
+                        child: Text(
+                          "Next",
+                          style: TextStyle(
+                              color: AppColors.defaultText,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.nextButton,
+                          shape: RoundedRectangleBorder(
+                            // Rounded corners
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+                    ),
+                    // SizeSelector(),
                   ],
                 ),
               ),
               backgroundColor: AppColors.backgroud,
             );
           } else if (snapshot.hasError) {
-            return Text('Error loading image: ${snapshot.error}'); // Handle error
+            return Text(
+                'Error loading image: ${snapshot.error}'); // Handle error
           } else {
             return Text('No image data'); // Handle no data
           }
         } else {
-          return Center(child: CircularProgressIndicator()); // Show loading indicator
+          return Center(
+              child: CircularProgressIndicator()); // Show loading indicator
         }
       },
     );
